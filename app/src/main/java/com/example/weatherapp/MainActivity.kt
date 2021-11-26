@@ -27,6 +27,8 @@ class MainActivity : AppCompatActivity() {
     val API: String = "a124813b59d8538ad2e27d4e4af87944"
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_FULLSCREEN        // hides the status bar (notification bar)
+
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
@@ -48,8 +50,7 @@ class MainActivity : AppCompatActivity() {
                 response = URL("https://api.openweathermap.org/data/2.5/weather?q=$CITY&units=metric&appid=$API&lang=hu")
                     .readText(Charsets.UTF_8)
             }
-            catch (e: Exception)
-            {
+            catch (e: Exception) {
                 response = null
             }
             return response
@@ -96,6 +97,16 @@ class MainActivity : AppCompatActivity() {
                 findViewById<ProgressBar>(R.id.loader).visibility = View.GONE
                 findViewById<RelativeLayout>(R.id.mainContainer).visibility = View.VISIBLE
 
+                var now = (SimpleDateFormat("HH:mm",Locale.ENGLISH)).format(Date(updateAt*1000))
+                var sunsetTime = (SimpleDateFormat("HH:mm",Locale.ENGLISH)).format(Date(sunrise*1000))
+                var sunriseTime = (SimpleDateFormat("HH:mm",Locale.ENGLISH)).format(Date(sunset*1000))
+
+                if(now > sunsetTime || now < sunriseTime){
+                    findViewById<RelativeLayout>(R.id.mainPage).setBackgroundResource(R.drawable.bg_gradient_night)
+                    if (Build.VERSION.SDK_INT >= 21) {
+                        getWindow().setStatusBarColor(getResources().getColor(R.color.black))
+                    }
+                }
             }
             catch(e: Exception)
             {
