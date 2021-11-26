@@ -84,19 +84,22 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content">
                 </TextView>
+                </LinearLayout>
             </LinearLayout>
-        </LinearLayout>
         <LinearLayout
             android:id="@+id/detailsContainer"
             android:orientation="vertical"
             android:layout_alignParentBottom="true"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
+
             <LinearLayout
-                android:weightSum="3"
+                android:weightSum="2"
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
+
+
                 <LinearLayout
                     android:orientation="vertical"
                     android:layout_weight="1"
@@ -104,14 +107,155 @@
                     android:padding="8dp"
                     android:background="#3cf1ebf1"
                     android:layout_width="0dp"
-                    android:layout_height="match_parent">
+                    android:layout_height="wrap_content">
                     <ImageView
+                        android:src="@drawable/wind"
                         android:layout_width="25dp"
-                        android:layout_height="25dp">
+                        android:layout_height="25dp"
+                        app:tint="#FFF">
                     </ImageView>
+                    <Space android:layout_height="wrap_content" android:layout_width="5dp">
+                    </Space>
+                    <TextView
+                        android:textSize="12sp"
+                        android:text="Szélerősség"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+                    </TextView>
+                    <TextView
+                        android:id="@+id/wind"
+                        android:textSize="14sp"
+                        android:text="5:30"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+                    </TextView>
                 </LinearLayout>
+                <Space android:layout_width="10dp" android:layout_height="wrap_content">
+                </Space>
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:padding="8dp"
+                    android:background="#3cf1ebf1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content">
+                    <ImageView
+                        android:src="@drawable/humidity"
+                        android:layout_width="25dp"
+                        android:layout_height="25dp"
+                        app:tint="#FFF">
+                    </ImageView>
+                    <Space android:layout_height="wrap_content" android:layout_width="5dp">
+                    </Space>
+                    <TextView
+                        android:textSize="12sp"
+                        android:text="Páratartalom"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+                    </TextView>
+                    <TextView
+                        android:id="@+id/humidity"
+                        android:textSize="14sp"
+                        android:text="5:30"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+                    </TextView>
+                </LinearLayout>
+                <Space android:layout_width="10dp" android:layout_height="wrap_content">
+                </Space>
+
+
             </LinearLayout>
+
+            <Space android:layout_width="wrap_content" android:layout_height="10dp">
+
+            </Space>
+
+            <LinearLayout
+                android:weightSum="2"
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:padding="8dp"
+                    android:background="#3cf1ebf1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content">
+                    <ImageView
+                        android:src="@drawable/sunrise"
+                        android:layout_width="25dp"
+                        android:layout_height="25dp"
+                        app:tint="#FFF">
+                    </ImageView>
+                    <Space android:layout_height="wrap_content" android:layout_width="5dp">
+                    </Space>
+                    <TextView
+                        android:textSize="12sp"
+                        android:text="Napfelkelte"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+                    </TextView>
+                    <TextView
+                        android:id="@+id/sunrise"
+                        android:textSize="14sp"
+                        android:text="5:30"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+                    </TextView>
+                </LinearLayout>
+                <Space android:layout_width="10dp" android:layout_height="wrap_content">
+                </Space>
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:padding="8dp"
+                    android:background="#3cf1ebf1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content">
+                    <ImageView
+                        android:src="@drawable/sunset"
+                        android:layout_width="25dp"
+                        android:layout_height="25dp"
+                        app:tint="#FFF">
+                    </ImageView>
+                    <Space android:layout_height="wrap_content" android:layout_width="5dp">
+                    </Space>
+                    <TextView
+                        android:textSize="12sp"
+                        android:text="Napnyugta"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+                    </TextView>
+                    <TextView
+                        android:id="@+id/sunset"
+                        android:textSize="14sp"
+                        android:text="5:30"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+                    </TextView>
+                </LinearLayout>
+                <Space android:layout_width="10dp" android:layout_height="wrap_content">
+                </Space>
+
+            </LinearLayout>
+
         </LinearLayout>
     </RelativeLayout>
-
+    <TextView
+        android:id="@+id/errorText"
+        android:visibility="gone"
+        android:layout_centerInParent="true"
+        android:text="Valami hiba történt.."
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+    </TextView>
 </RelativeLayout>
