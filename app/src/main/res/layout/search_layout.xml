@@ -9,29 +9,32 @@
     android:padding="25dp"
     android:background="@drawable/bg_gradient"
     tools:context=".MainActivity">
+
     <LinearLayout
         android:id="@+id/searchPage"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="horizontal">
+
         <LinearLayout
             android:id="@+id/top"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
+
             <TextView
-                android:text="Városok"
-                android:padding="5dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="20dp">
-            </TextView>
-            <LinearLayout
                 android:padding="5dp"
+                android:text="Városok"
+                android:textSize="20dp"></TextView>
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:orientation="horizontal"
+                android:padding="5dp"
                 android:weightSum="2">
 
                 <LinearLayout
@@ -39,13 +42,13 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:orientation="vertical">
+
                     <EditText
                         android:id="@+id/editText"
                         android:layout_width="match_parent"
                         android:layout_height="40dp"
                         android:background="#fff"
-                        android:paddingStart="10dp">
-                    </EditText>
+                        android:paddingStart="10dp"></EditText>
                 </LinearLayout>
 
                 <Space
@@ -57,16 +60,27 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:orientation="vertical">
+
                     <Button
-                        android:background="#70116680"
                         android:layout_width="wrap_content"
                         android:layout_height="40dp"
+                        android:background="#70116680"
                         android:onClick="okButtonPushed"
                         android:text="OK"
-                        android:textSize="10dp">
-                    </Button>
+                        android:textSize="10dp"></Button>
                 </LinearLayout>
             </LinearLayout>
+            <TextView
+                android:paddingLeft="10dp"
+                android:id="@+id/eredmeny"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Valami">
+            </TextView>
+            <ListView
+                android:id="@+id/listView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
         </LinearLayout>
     </LinearLayout>
 </RelativeLayout>

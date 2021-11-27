@@ -1,18 +1,24 @@
 package com.example.weatherapp
 
 import android.app.AlertDialog
+import android.content.Context
 import android.content.DialogInterface
+import android.content.Intent
 import android.os.AsyncTask
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.se.omapi.Reader
+import android.util.Log
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.widget.*
 import androidx.annotation.RequiresApi
+import com.google.gson.Gson
 import org.json.JSONObject
 import org.w3c.dom.Text
+import java.io.*
 import java.lang.Exception
 import java.net.URL
 import java.text.SimpleDateFormat
@@ -21,20 +27,28 @@ import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
+import kotlin.collections.ArrayList
 import kotlin.math.roundToInt
+import android.widget.AdapterView
 
 class MainActivity : AppCompatActivity() {
     var CITY: String = "debrecen,hu"
     val API: String = "a124813b59d8538ad2e27d4e4af87944"
-    lateinit var now : String
-    lateinit var sunsetTime : String
-    lateinit var sunriseTime : String
-    override fun onCreate(savedInstanceState: Bundle?) {
-        window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_FULLSCREEN        // hides the status bar (notification bar)
 
+    var now : String = ""
+    var sunsetTime : String = ""
+    var sunriseTime : String = ""
+
+    var jsonString : String = ""
+    var cities = ListCityModel()
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        jsonString = loadJson(this)
+        cities = Gson().fromJson(jsonString, ListCityModel::class.java)
+        Log.d("MainActivity","Size: ${cities.data.size}")
+        window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_FULLSCREEN        // hides the status bar (notification bar)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
         weatherTask().execute()
     }
 
@@ -133,13 +147,67 @@ class MainActivity : AppCompatActivity() {
         if(itsNightNow()){
             findViewById<RelativeLayout>(R.id.searchLayout).setBackgroundResource(R.drawable.bg_gradient_night)
         }
-
     }
 
     fun okButtonPushed(view: View) {
-        CITY = findViewById<EditText>(R.id.editText).text.toString()
+        //CITY = findViewById<EditText>(R.id.editText).text.toString()
+        //setContentView(R.layout.activity_main)
+        //weatherTask().execute()
+        var cityName = findViewById<EditText>(R.id.editText).text.toString()
+        var listOfCityMatches = listOf<CityModel>().toMutableList()
+        var i = 0
+        while(i<cities.data.size){
+            if (cities.data[i].name.equals(cityName))
+            {
+                listOfCityMatches.add(cities.data[i])
+            }
+            i++
+        }
+        var listView = findViewById<ListView>(R.id.listView)
+        var list = mutableListOf<Model>()
+        if(listOfCityMatches.size > 0){
+            var i = 0
+            while(i<listOfCityMatches.size)
+            {
+                list.add(Model(listOfCityMatches[i].name,listOfCityMatches[i].country))
+                i++
+            }
+        }
+        else{
+            list.add(Model("Nincs találat",""))
+        }
+        listView.adapter = MyAdapter(this,R.layout.row,list)
+        findViewById<TextView>(R.id.eredmeny).text = "Találatok: "+listOfCityMatches.size.toString()
+        var selectedCity = CityModel()
+        listView.setOnItemClickListener{parent:AdapterView<*>, view: View, position:Int, id:Long ->
+            selectedCity = listOfCityMatches[position]
+            updateCity(selectedCity.name+", "+selectedCity.country)
+        }
+    }
+    fun updateCity(s:String){
+        CITY = s
         setContentView(R.layout.activity_main)
         weatherTask().execute()
+    }
+
+    fun loadJson(context: Context): String {
+        var input : InputStream? = null
+        var jsonString: String
+
+        try{
+            input = context.assets.open("cities.json")
+
+            val size = input.available()
+            val buffer = ByteArray(size)
+            input.read(buffer)
+            jsonString = String(buffer)
+            return jsonString
+        } catch (e: Exception){
+            e.printStackTrace()
+        } finally {
+            input?.close()
+        }
+        return ""
     }
 
     fun backButtonPushed(view: View) {
