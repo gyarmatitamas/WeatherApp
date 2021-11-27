@@ -1,14 +1,15 @@
 package com.example.weatherapp
 
+import android.app.AlertDialog
+import android.content.DialogInterface
 import android.os.AsyncTask
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
-import android.widget.ProgressBar
-import android.widget.RelativeLayout
-import android.widget.TextClock
-import android.widget.TextView
+import android.view.View.GONE
+import android.view.View.VISIBLE
+import android.widget.*
 import androidx.annotation.RequiresApi
 import org.json.JSONObject
 import org.w3c.dom.Text
@@ -23,9 +24,11 @@ import java.util.*
 import kotlin.math.roundToInt
 
 class MainActivity : AppCompatActivity() {
-    val CITY: String = "debrecen,hu"
+    var CITY: String = "debrecen,hu"
     val API: String = "a124813b59d8538ad2e27d4e4af87944"
-
+    lateinit var now : String
+    lateinit var sunsetTime : String
+    lateinit var sunriseTime : String
     override fun onCreate(savedInstanceState: Bundle?) {
         window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_FULLSCREEN        // hides the status bar (notification bar)
 
@@ -39,7 +42,7 @@ class MainActivity : AppCompatActivity() {
     {
         override fun onPreExecute() {
             super.onPreExecute()
-            findViewById<ProgressBar>(R.id.loader).visibility = View. VISIBLE
+            findViewById<ProgressBar>(R.id.loader).visibility = VISIBLE
             findViewById<RelativeLayout>(R.id.mainContainer).visibility = View.GONE
             findViewById<TextView>(R.id.errorText).visibility = View.GONE
         }
@@ -70,13 +73,13 @@ class MainActivity : AppCompatActivity() {
                 val updateAt:Long = jsonObj.getLong("dt") + 3600    // UTC + 1:00
                 val updateAtText = "Frissítve: "+SimpleDateFormat("HH:mm", Locale.ENGLISH).format(Date(updateAt*1000))
 
-                val temp = ""+main.getString("temp").toDouble().roundToInt()+"°C"                   // default is .2 double
-                val tempMin = "Minimum : "+main.getString("temp_min").toDouble().roundToInt()+"°C"  // default is .2 double
-                val tempMax = "Maximum : "+main.getString("temp_max").toDouble().roundToInt()+"°C"  // default is .2 double
+                val temp = ""+main.getDouble("temp").roundToInt()+"°C"                   // default is .2 double
+                val tempMin = "Minimum : "+main.getDouble("temp_min").roundToInt()+"°C"  // default is .2 double
+                val tempMax = "Maximum : "+main.getDouble("temp_max").roundToInt()+"°C"  // default is .2 double
                 val weatherDescription = weather.getString("description")
 
                 val humidity = main.getString("humidity") + " %"
-                val windSpeed = ""+((wind.getString("speed").toDouble()*3.6).roundToInt()) + " km/h"            // default is meter/sec
+                val windSpeed = ""+((wind.getDouble("speed")*3.6).roundToInt()) + " km/h"            // default is meter/sec
 
                 val sunrise: Long = sys.getLong("sunrise") + 3600   // UTC + 1:00
                 val sunset: Long = sys.getLong("sunset") + 3600     // UTC + 1:00
@@ -95,24 +98,63 @@ class MainActivity : AppCompatActivity() {
                 findViewById<TextView>(R.id.sunset).text = SimpleDateFormat("HH:mm",Locale.FRANCE).format(Date(sunset*1000))
 
                 findViewById<ProgressBar>(R.id.loader).visibility = View.GONE
-                findViewById<RelativeLayout>(R.id.mainContainer).visibility = View.VISIBLE
+                findViewById<RelativeLayout>(R.id.mainContainer).visibility = VISIBLE
 
-                var now = (SimpleDateFormat("HH:mm",Locale.ENGLISH)).format(Date(updateAt*1000))
-                var sunsetTime = (SimpleDateFormat("HH:mm",Locale.ENGLISH)).format(Date(sunrise*1000))
-                var sunriseTime = (SimpleDateFormat("HH:mm",Locale.ENGLISH)).format(Date(sunset*1000))
+                now = (SimpleDateFormat("HH:mm",Locale.ENGLISH)).format(Date(updateAt*1000))
+                sunsetTime = (SimpleDateFormat("HH:mm",Locale.ENGLISH)).format(Date(sunset*1000))
+                sunriseTime = (SimpleDateFormat("HH:mm",Locale.ENGLISH)).format(Date(sunrise*1000))
 
-                if(now > sunsetTime || now < sunriseTime){
+                if(itsNightNow()){
                     findViewById<RelativeLayout>(R.id.mainPage).setBackgroundResource(R.drawable.bg_gradient_night)
                     if (Build.VERSION.SDK_INT >= 21) {
                         getWindow().setStatusBarColor(getResources().getColor(R.color.black))
                     }
-                }
+                } // end of if
+
             }
             catch(e: Exception)
             {
-                findViewById<ProgressBar>(R.id.loader).visibility = View.GONE
+                if(itsNightNow()){
+                    findViewById<RelativeLayout>(R.id.mainPage).setBackgroundResource(R.drawable.bg_gradient_night)
+                }
+                findViewById<ProgressBar>(R.id.loader).visibility = GONE
+                findViewById<TextView>(R.id.errorText).text = ("Nem található a város az adatbázisban!\n" +
+                        "Ellenőrizd az internetkapcsolatot!\n" +
+                        "A város neve a következő formátumú:\n" +
+                        "\"Városnév, ország rövidítve\": \"Debrecen, Hu\" ")
                 findViewById<TextView>(R.id.errorText).visibility = View.VISIBLE
+                findViewById<LinearLayout>(R.id.errorContainer).visibility = View.VISIBLE
             }
         }
     }
+
+    fun plusImagePushed(view: View) {
+        setContentView(R.layout.search_layout)
+        if(itsNightNow()){
+            findViewById<RelativeLayout>(R.id.searchLayout).setBackgroundResource(R.drawable.bg_gradient_night)
+        }
+
+    }
+
+    fun okButtonPushed(view: View) {
+        CITY = findViewById<EditText>(R.id.editText).text.toString()
+        setContentView(R.layout.activity_main)
+        weatherTask().execute()
+    }
+
+    fun backButtonPushed(view: View) {
+        CITY = "Debrecen, HU"
+        weatherTask().execute()
+        findViewById<ProgressBar>(R.id.loader).visibility = View.VISIBLE
+        findViewById<LinearLayout>(R.id.errorContainer).visibility = GONE
+    }
+
+    fun itsNightNow():Boolean{
+        if(now > sunsetTime || now < sunriseTime)
+        {
+            return true
+        }
+        return false
+    }
 }
+

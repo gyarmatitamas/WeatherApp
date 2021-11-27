@@ -4,7 +4,7 @@
         <!-- Primary brand color. -->
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
-        <item name="colorPrimary">#1dacd6</item>
+        <item name="colorPrimary">#1DACD6</item>
         <item name="colorPrimaryVariant">#1dacd6</item>
         <item name="colorOnPrimary">@color/white</item>
         <item name="android:textColor">#FFF</item>
