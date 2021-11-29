@@ -132,10 +132,7 @@ class MainActivity : AppCompatActivity() {
                     findViewById<RelativeLayout>(R.id.mainPage).setBackgroundResource(R.drawable.bg_gradient_night)
                 }
                 findViewById<ProgressBar>(R.id.loader).visibility = GONE
-                findViewById<TextView>(R.id.errorText).text = ("Nem található a város az adatbázisban!\n" +
-                        "Ellenőrizd az internetkapcsolatot!\n" +
-                        "A város neve a következő formátumú:\n" +
-                        "\"Városnév, ország rövidítve\": \"Debrecen, Hu\" ")
+                findViewById<TextView>(R.id.errorText).text = ("Ellenőrizd az internetkapcsolatot!")
                 findViewById<TextView>(R.id.errorText).visibility = View.VISIBLE
                 findViewById<LinearLayout>(R.id.errorContainer).visibility = View.VISIBLE
             }
@@ -149,11 +146,17 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    fun backArrowPushed(view: View){
+        setContentView(R.layout.activity_main)
+        weatherTask().execute()
+    }
+
     fun okButtonPushed(view: View) {
         //CITY = findViewById<EditText>(R.id.editText).text.toString()
         //setContentView(R.layout.activity_main)
         //weatherTask().execute()
         var cityName = findViewById<EditText>(R.id.editText).text.toString()
+        cityName = cityName.capitalize()
         var listOfCityMatches = listOf<CityModel>().toMutableList()
         var i = 0
         while(i<cities.data.size){
@@ -172,17 +175,18 @@ class MainActivity : AppCompatActivity() {
                 list.add(Model(listOfCityMatches[i].name,listOfCityMatches[i].country))
                 i++
             }
+            listView.adapter = MyAdapter(this,R.layout.row,list)
+            var selectedCity = CityModel()
+            listView.setOnItemClickListener{parent:AdapterView<*>, view: View, position:Int, id:Long ->
+                selectedCity = listOfCityMatches[position]
+                updateCity(selectedCity.name+", "+selectedCity.country)
+            }
         }
         else{
             list.add(Model("Nincs találat",""))
+            listView.adapter = MyAdapter(this,R.layout.row,list)
         }
-        listView.adapter = MyAdapter(this,R.layout.row,list)
         findViewById<TextView>(R.id.eredmeny).text = "Találatok: "+listOfCityMatches.size.toString()
-        var selectedCity = CityModel()
-        listView.setOnItemClickListener{parent:AdapterView<*>, view: View, position:Int, id:Long ->
-            selectedCity = listOfCityMatches[position]
-            updateCity(selectedCity.name+", "+selectedCity.country)
-        }
     }
     fun updateCity(s:String){
         CITY = s
